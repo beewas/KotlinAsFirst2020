@@ -74,7 +74,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     return when {
-        n < 10 -> 1
+        n < 10 && n > -10 -> 1
         else -> 1 + digitNumber(n / 10)
     }
 }
@@ -114,6 +114,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
+    if (n == 2) return 1
     for (i in (n / 2) + 1 downTo 1) if (n % i == 0) return i
     return 1
 }
