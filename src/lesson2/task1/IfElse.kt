@@ -3,6 +3,7 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import lesson2.task2.mid
 import kotlin.math.*
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
@@ -112,10 +113,8 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    var rook = false
-    var bishop = false
-    if (kingX == rookX || kingY == rookY) rook = true
-    if (abs(kingX - bishopX) == abs(kingY - bishopY)) bishop = true
+    val rook = kingX == rookX || kingY == rookY
+    val bishop = abs(kingX - bishopX) == abs(kingY - bishopY)
     return when {
         rook && bishop -> 3
         bishop -> 2
@@ -132,27 +131,16 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
+
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     if (!(a + b > c && a + c > b && b + c > a)) return -1
-    val ap = a.pow(2)
-    val bp = b.pow(2)
-    val cp = c.pow(2)
-    when {
-        a > b && a > c -> return when {
-            ap > bp + cp -> 2
-            ap == bp + cp -> 1
-            else -> 0
-        }
-        b > a && b > c -> return when {
-            bp > ap + cp -> 2
-            bp == ap + cp -> 1
-            else -> 0
-        }
-        else -> return when {
-            cp > bp + ap -> 2
-            cp == ap + bp -> 1
-            else -> 0
-        }
+    val maxx = max(a, max(b, c)).pow(2)
+    val midx = mid(a, b, c).pow(2)
+    val minx = min(a, min(b, c)).pow(2)
+    return when {
+        maxx == midx + minx -> 1
+        maxx > midx + minx -> 2
+        else -> 0
     }
 }
 

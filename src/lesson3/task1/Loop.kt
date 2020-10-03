@@ -90,7 +90,7 @@ fun fib(n: Int): Int {
     var a = 1
     var b = 1
     var out = 0
-    for (i in 2 until n){
+    for (i in 2 until n) {
         out = a + b
         b = a
         a = out
@@ -153,15 +153,18 @@ fun collatzSteps(x: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
+
+fun gcd(m: Int, n: Int): Int {
     var mx = m
     var nx = n
-    while(nx != 0 && mx != 0){
+    while (nx != 0 && mx != 0) {
         if (nx > mx) nx %= mx
         else mx %= nx
     }
-    return m * n / max(nx, mx)
+    return max(nx, mx)
 }
+
+fun lcm(m: Int, n: Int) = m * n / gcd(n, m)
 
 /**
  * Средняя (3 балла)
@@ -170,15 +173,7 @@ fun lcm(m: Int, n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    var mx = m
-    var nx = n
-    while(nx != 0 && mx != 0){
-        if (nx > mx) nx %= mx
-        else mx %= nx
-    }
-    return max(mx, nx) == 1
-}
+fun isCoPrime(m: Int, n: Int) = gcd(m, n) == 1
 
 /**
  * Средняя (3 балла)
@@ -252,8 +247,7 @@ fun cos(x: Double, eps: Double): Double = TODO()
  */
 
 // pos -> right to left
-fun getNumberInPosition(num: Int, pos: Int) =
-    if (pos == 1) num % 10 else (num % 10.0.pow(pos) / 10.0.pow(pos - 1)).toInt()
+fun getNumberInPosition(num: Int, pos: Int) = ((num % 10.0.pow(pos)) / 10.0.pow(pos - 1)).toInt()
 
 fun squareSequenceDigit(n: Int): Int {
     var count = 0

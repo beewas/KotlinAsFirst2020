@@ -42,17 +42,8 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int) =
 fun daysInMonth(month: Int, year: Int): Int {
     val leap = year % 400 == 0 || year % 4 == 0 && year % 100 != 0
     return when (month) {
-        1 -> 31
-        3 -> 31
-        4 -> 30
-        5 -> 31
-        6 -> 30
-        7 -> 31
-        8 -> 31
-        9 -> 30
-        10 -> 31
-        11 -> 30
-        12 -> 31
+        1, 3, 5, 7, 8, 10, 12 -> 31
+        4, 6, 9, 11 -> 30
         else -> if (leap) 29 else 28
     }
 }
@@ -78,6 +69,11 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
+fun mid(a: Double, b: Double, c: Double) = when {
+    a >= b && a >= c -> if (b >= c) b else c
+    b >= c && b >= a -> if (c >= a) c else a
+    else -> if (b >= a) b else a
+}
+
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int) =
-    ((r >= a) && (s >= b)) || ((r >= b) && (s >= a)) || ((r >= a) && (s >= c)) || ((r >= c) && (s >= a)) ||
-            ((r >= c) && (s >= b)) || ((r >= b) && (s >= c))
+    min(a, min(b, c)) <= min(r, s) && max(r, s) >= mid(a.toDouble(), b.toDouble(), c.toDouble())
