@@ -193,7 +193,7 @@ fun factorize(n: Int): List<Int> {
             nx /= i
             i = 2
         }
-        i++
+        else i++
     }
     return out
 }
@@ -322,7 +322,7 @@ fun numberName(n: Int, thousands: Boolean): String {
     }
     if (thousands) when (n % 10) {
         1 -> out.add("тысяча")
-        2 -> out.add("тысячи")
+        2, 3, 4 -> out.add("тысячи")
         else -> out.add("тысяч")
     }
     return out.joinToString(" ")
