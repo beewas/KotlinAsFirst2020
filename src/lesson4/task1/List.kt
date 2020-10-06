@@ -127,7 +127,9 @@ fun abs(v: List<Double>): Double = TODO()
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>) = if (list.isNotEmpty()) list.fold(0.0) { previousResult, element ->
+    previousResult + element
+} / list.size else 0.0
 
 /**
  * Средняя (3 балла)
@@ -146,7 +148,11 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Int>, b: List<Int>): Int = TODO()
+fun times(a: List<Int>, b: List<Int>) = if (a.isNotEmpty() && b.isNotEmpty()) {
+    var out = 0
+    for (i in a.indices) out += a[i] * b[i]
+    out
+} else 0
 
 /**
  * Средняя (3 балла)
@@ -177,7 +183,20 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    val out = mutableListOf<Int>()
+    var nx = n
+    var i = 2
+    while (nx > 1) {
+        if (nx % i == 0) {
+            out.add(i)
+            nx /= i
+            i = 2
+        }
+        i++
+    }
+    return out
+}
 
 /**
  * Сложная (4 балла)
@@ -186,7 +205,7 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int) = factorize(n).joinToString("*")
 
 /**
  * Средняя (3 балла)
@@ -250,4 +269,68 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+// 1 <= n <= 999
+fun numberName(n: Int, thousands: Boolean): String {
+    val out = mutableListOf<String>()
+    when (n / 100) {
+        1 -> out.add("сто")
+        2 -> out.add("двести")
+        3 -> out.add("триста")
+        4 -> out.add("четыреста")
+        5 -> out.add("пятьсот")
+        6 -> out.add("шестьсот")
+        7 -> out.add("семьсот")
+        8 -> out.add("восемьсот")
+        9 -> out.add("девятьсот")
+    }
+    when (n % 100) {
+        in 10..19 -> {
+            when (n % 100) {
+                10 -> out.add("десять")
+                11 -> out.add("одиннадцать")
+                12 -> out.add("двенадцать")
+                13 -> out.add("тринадцать")
+                14 -> out.add("четырнадцать")
+                15 -> out.add("пятнадцать")
+                16 -> out.add("шестнадцать")
+                17 -> out.add("семнадцать")
+                18 -> out.add("восемнадцать")
+                19 -> out.add("девятнадцать")
+            }
+            if (thousands) out.add("тысяч")
+            return out.joinToString(" ")
+        }
+        in 20..29 -> out.add("двадцать")
+        in 30..39 -> out.add("тридцать")
+        in 40..49 -> out.add("сорок")
+        in 50..59 -> out.add("пятьдесят")
+        in 60..69 -> out.add("шестьдесят")
+        in 70..79 -> out.add("семьдесят")
+        in 80..89 -> out.add("восемьдесят")
+        in 90..99 -> out.add("девяносто")
+    }
+    when (n % 10) {
+        1 -> if (thousands) out.add("одна") else out.add("один")
+        2 -> if (thousands) out.add("две") else out.add("два")
+        3 -> out.add("три")
+        4 -> out.add("четыре")
+        5 -> out.add("пять")
+        6 -> out.add("шесть")
+        7 -> out.add("семь")
+        8 -> out.add("восемь")
+        9 -> out.add("девять")
+    }
+    if (thousands) when (n % 10) {
+        1 -> out.add("тысяча")
+        2 -> out.add("тысячи")
+        else -> out.add("тысяч")
+    }
+    return out.joinToString(" ")
+}
+
+fun russian(n: Int) =
+    if (n >= 1000 && n % 1000 != 0)
+        numberName(n / 1000, true) + " " +
+                numberName(n % 1000, false)
+    else if (n >= 1000) numberName(n / 1000, true)
+    else numberName(n, false)
