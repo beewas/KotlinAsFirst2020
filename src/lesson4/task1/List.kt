@@ -3,6 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import ru.spbstu.ktuples.zip
 import kotlin.math.sqrt
 
 // Урок 4: списки
@@ -127,9 +128,7 @@ fun abs(v: List<Double>): Double = TODO()
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>) = if (list.isNotEmpty()) list.fold(0.0) { previousResult, element ->
-    previousResult + element
-} / list.size else 0.0
+fun mean(list: List<Double>) = if (list.isNotEmpty()) list.sum() / list.size else 0.0
 
 /**
  * Средняя (3 балла)
@@ -148,11 +147,7 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Int>, b: List<Int>) = if (a.isNotEmpty() && b.isNotEmpty()) {
-    var out = 0
-    for (i in a.indices) out += a[i] * b[i]
-    out
-} else 0
+fun times(a: List<Int>, b: List<Int>) = zip(a, b) { x, y -> x * y }.sum()
 
 /**
  * Средняя (3 балла)
@@ -191,9 +186,7 @@ fun factorize(n: Int): List<Int> {
         if (nx % i == 0) {
             out.add(i)
             nx /= i
-            i = 2
-        }
-        else i++
+        } else i++
     }
     return out
 }
@@ -272,53 +265,28 @@ fun roman(n: Int): String = TODO()
 // 1 <= n <= 999
 fun numberName(n: Int, thousands: Boolean): String {
     val out = mutableListOf<String>()
-    when (n / 100) {
-        1 -> out.add("сто")
-        2 -> out.add("двести")
-        3 -> out.add("триста")
-        4 -> out.add("четыреста")
-        5 -> out.add("пятьсот")
-        6 -> out.add("шестьсот")
-        7 -> out.add("семьсот")
-        8 -> out.add("восемьсот")
-        9 -> out.add("девятьсот")
-    }
+    val numbers = listOf(
+        "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот",
+        "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать",
+        "семнадцать", "восемнадцать", "девятнадцать",
+        "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто",
+        "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять",
+        "одна", "две"
+    )
+
+    if (n / 100 != 0) out.add(numbers[n / 100 - 1])
+
     when (n % 100) {
         in 10..19 -> {
-            when (n % 100) {
-                10 -> out.add("десять")
-                11 -> out.add("одиннадцать")
-                12 -> out.add("двенадцать")
-                13 -> out.add("тринадцать")
-                14 -> out.add("четырнадцать")
-                15 -> out.add("пятнадцать")
-                16 -> out.add("шестнадцать")
-                17 -> out.add("семнадцать")
-                18 -> out.add("восемнадцать")
-                19 -> out.add("девятнадцать")
-            }
+            out.add(numbers[n % 100 - 1])
             if (thousands) out.add("тысяч")
             return out.joinToString(" ")
         }
-        in 20..29 -> out.add("двадцать")
-        in 30..39 -> out.add("тридцать")
-        in 40..49 -> out.add("сорок")
-        in 50..59 -> out.add("пятьдесят")
-        in 60..69 -> out.add("шестьдесят")
-        in 70..79 -> out.add("семьдесят")
-        in 80..89 -> out.add("восемьдесят")
-        in 90..99 -> out.add("девяносто")
+        in 20..99 -> out.add(numbers[n % 100 / 10 + 17])
     }
     when (n % 10) {
-        1 -> if (thousands) out.add("одна") else out.add("один")
-        2 -> if (thousands) out.add("две") else out.add("два")
-        3 -> out.add("три")
-        4 -> out.add("четыре")
-        5 -> out.add("пять")
-        6 -> out.add("шесть")
-        7 -> out.add("семь")
-        8 -> out.add("восемь")
-        9 -> out.add("девять")
+        in 1..2 -> if (thousands) out.add(numbers[n % 10 + 35]) else out.add(numbers[n % 10 + 26])
+        in 3..9 -> out.add(numbers[n % 10 + 26])
     }
     if (thousands) when (n % 10) {
         1 -> out.add("тысяча")
