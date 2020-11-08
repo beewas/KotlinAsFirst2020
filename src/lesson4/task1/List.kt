@@ -121,7 +121,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>) = sqrt(v.map { it * it }.sum())
 
 /**
  * Простая (2 балла)
@@ -138,7 +138,11 @@ fun mean(list: List<Double>) = if (list.isNotEmpty()) list.sum() / list.size els
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    val midl = list.sum() / list.size
+    for (i in 0 until list.size) list[i] -= midl
+    return list
+}
 
 /**
  * Средняя (3 балла)

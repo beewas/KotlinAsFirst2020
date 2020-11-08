@@ -2,6 +2,9 @@
 
 package lesson5.task1
 
+import ru.spbstu.kotlin.typeclass.classes.defaultMonoids
+import ru.spbstu.wheels.sorted
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -17,18 +20,7 @@ package lesson5.task1
 fun shoppingListCost(
     shoppingList: List<String>,
     costs: Map<String, Double>
-): Double {
-    var totalCost = 0.0
-
-    for (item in shoppingList) {
-        val itemCost = costs[item]
-        if (itemCost != null) {
-            totalCost += itemCost
-        }
-    }
-
-    return totalCost
-}
+): Double = shoppingList.map { costs[it] }.sumByDouble { it ?: 0.0 }
 
 /**
  * Пример
@@ -96,7 +88,12 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
+fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
+    val out = mutableMapOf<Int, MutableList<String>>()
+    for ((key, value) in grades)
+        if (out[value]?.add(key) == null) out[value] = mutableListOf(key)
+    return out
+}
 
 /**
  * Простая (2 балла)
@@ -108,7 +105,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>) = a.all { b[it.key] == it.value }
 
 /**
  * Простая (2 балла)
@@ -124,18 +121,17 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
  *   subtractOf(a = mutableMapOf("a" to "z"), mapOf("a" to "z"))
  *     -> a changes to mutableMapOf() aka becomes empty
  */
-fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    TODO()
-}
+fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) =
+    b.map { if (a[it.key] == it.value) a.remove(it.key) }
 
 /**
  * Простая (2 балла)
  *
  * Для двух списков людей найти людей, встречающихся в обоих списках.
- * В выходном списке не должно быть повторяюихся элементов,
+ * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b).toList()
 
 /**
  * Средняя (3 балла)
@@ -277,7 +273,22 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    if (list.isEmpty()) return Pair(-1, -1)
+    val fwork = list.filter { it <= number }.sorted()
+    if (fwork[0] > number / 2 || fwork[fwork.size - 1] < number / 2) return Pair(-1, -1)
+    var fst = 0
+    var lst = fwork.size - 1
+    while (fst < lst) {
+        val sum = fwork[fst] + fwork[lst]
+        when {
+            sum == number -> return Pair(fst, lst)
+            sum < number -> fst++
+            else -> lst--
+        }
+    }
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -300,4 +311,5 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
+
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()

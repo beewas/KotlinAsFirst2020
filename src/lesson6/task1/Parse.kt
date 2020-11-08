@@ -2,6 +2,9 @@
 
 package lesson6.task1
 
+import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -138,7 +141,17 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    //понятно, что ошибка может тут и проскочить, но такой защиты достаточно для случайной опечатки
+    val work = expression.filter { it != ' ' }.split('+', '-')
+    val signs = expression.filter { it == '-' || it == '+' }
+    if (work.size != signs.length + 1) throw IllegalArgumentException()
+
+    var out = work[0].toInt()
+    for (i in signs.indices)
+        out += if (signs[i] == '-') -work[i + 1].toInt() else work[i + 1].toInt()
+    return out
+}
 
 /**
  * Сложная (6 баллов)
@@ -213,4 +226,40 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val conv = Array<Int>(cells) { 0 }
+    var opening = 0
+    var closing = 0
+    for (i in commands) when (i) {
+        '[' -> opening++
+        ']' -> closing++
+        '+', '-', '>', '<', ' ' -> continue
+        else -> throw IllegalArgumentException()
+    }
+    if (opening != closing) throw IllegalArgumentException()
+
+    var pointer = cells / 2
+    var comPointer = 0
+    val pointOfReturn = mutableListOf<Int>()
+    var skipToNext = 0
+    var numberOfCommands = 0
+    while (comPointer < commands.length) {
+        if (numberOfCommands >= limit) break
+        if (pointer >= conv.size) throw IllegalStateException()
+        when (commands[comPointer]) {
+            '[' -> if (conv[pointer] != 0) pointOfReturn.add(comPointer) else skipToNext++
+            ']' -> {
+                if (conv[pointer] != 0 && skipToNext == 0) comPointer = pointOfReturn.last()
+                else if (conv[pointer] == 0 && skipToNext == 0) pointOfReturn.removeAt(pointOfReturn.size - 1)
+                else skipToNext--
+            }
+            '+' -> if (skipToNext == 0) conv[pointer]++
+            '-' -> if (skipToNext == 0) conv[pointer]--
+            '>' -> if (skipToNext == 0) pointer++
+            '<' -> if (skipToNext == 0) pointer--
+        }
+        comPointer++
+        if (skipToNext == 0) numberOfCommands++
+    }
+    return conv.toList()
+}
