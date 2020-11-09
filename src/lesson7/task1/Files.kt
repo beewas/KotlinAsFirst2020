@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.exp
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -103,39 +104,33 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  */
 fun sibilants(inputName: String, outputName: String) {
     val writer = File(outputName).writer()
-    var text = File(inputName).readText()
-    val first = listOf('ж', 'ч', 'ш', 'щ')
-    val expected = listOf('ы', 'я', 'ю', 'ю')
-    val right = listOf('и', 'а', 'у', 'у')
-    var pointer = 0
-    fun letterCorrection(entry: List<Char>, expected: Char, right: Char) {
-        if (!entry.contains(text[pointer])) {
-            writer.write(text[pointer].toString())
-            pointer++
-        } else {
-            when {
-                text[pointer + 1] == expected -> {
-                    writer.write(text[pointer] + right.toString())
-                    pointer += 2
+    val text = File(inputName).readText()
+    val first = listOf('ж', 'ш', 'ч', 'щ')
+    val expected = listOf('ы', 'я', 'ю')
+    val right = listOf('и', 'а', 'у')
+    var wrong = false
+
+    for (i in text.indices)
+        when {
+            wrong -> {
+                for (j in expected.indices) if (text[i].toLowerCase() == expected[j]) {
+                    if (text[i] == expected[j]) writer.write(right[j].toString())
+                    else writer.write(right[j].toUpperCase().toString())
                 }
-                text[pointer + 1] == expected.toUpperCase() -> {
-                    writer.write(text[pointer] + right.toUpperCase().toString())
-                    pointer += 2
-                }
-                else -> {
-                    writer.write(text[pointer].toString())
-                    pointer++
-                }
+                wrong = false
             }
+            first.contains(text[i].toLowerCase()) && i < text.length - 1 && expected.contains(text[i + 1].toLowerCase()) ->{
+                wrong = true
+                writer.write(text[i].toString())
+            }
+            else -> writer.write(text[i].toString())
         }
-    }
-    while (pointer < text.length - 1) {
-        for (i in first.indices) {
-            letterCorrection(listOf(first[i], first[i].toUpperCase()), expected[i], right[i])
-        }
-    }
+    writer.close()
 }
 
+fun main() {
+    sibilants("input/sibilants_in1.txt", "temp.txt")
+}
 /**
  * Средняя (15 баллов)
  *
