@@ -119,7 +119,8 @@ fun sibilants(inputName: String, outputName: String) {
                 }
                 wrong = false
             }
-            first.contains(text[i].toLowerCase()) && i < text.length - 1 && expected.contains(text[i + 1].toLowerCase()) ->{
+            first.contains(text[i].toLowerCase()) && i < text.length - 1
+                    && expected.contains(text[i + 1].toLowerCase()) -> {
                 wrong = true
                 writer.write(text[i].toString())
             }
@@ -131,6 +132,7 @@ fun sibilants(inputName: String, outputName: String) {
 fun main() {
     sibilants("input/sibilants_in1.txt", "temp.txt")
 }
+
 /**
  * Средняя (15 баллов)
  *
