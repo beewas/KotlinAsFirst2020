@@ -131,9 +131,8 @@ fun plusMinus(expression: String): Int {
     if (expression.isEmpty()) throw IllegalArgumentException("At least one number is required for calculations")
     val signs = mutableListOf<Char>()
     val work = mutableListOf<Int>()
-    var digit = false
+    var isNumber = false
     var i = 0
-    var j: Int
     while (i < expression.length) {
         when {
             expression[i] == ' ' -> {
@@ -141,22 +140,22 @@ fun plusMinus(expression: String): Int {
                 continue
             }
             expression[i].isDigit() -> {
-                if (digit) throw IllegalArgumentException()
-                j = i
+                if (isNumber) throw IllegalArgumentException("Error in the input; the desired format: a + b - c")
+                val j = i
                 while (i < expression.length && expression[i].isDigit()) i++
                 work.add(expression.substring(j, i).toInt())
-                digit = true
+                isNumber = true
             }
             expression[i] == '+' || expression[i] == '-' -> {
-                if (!digit) throw IllegalArgumentException()
+                if (!isNumber) throw IllegalArgumentException("Error in the input; the desired format: a + b - c")
                 signs.add(expression[i])
-                digit = false
+                isNumber = false
                 i++
             }
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalArgumentException("Error in the input; the desired format: a + b - c")
         }
     }
-
+    if (signs.size + 1 != work.size) throw IllegalArgumentException("Error in the input; the desired format: a + b - c")
     var out = work[0]
     for (a in signs.indices)
         out += if (signs[a] == '-') -work[a + 1] else work[a + 1]

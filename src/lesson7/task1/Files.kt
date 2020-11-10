@@ -116,7 +116,7 @@ fun sibilants(inputName: String, outputName: String) {
                 else writer.write(right[text[i].toLowerCase()]?.toUpperCase().toString())
                 wrong = false
             }
-            (text[i].toLowerCase()) in first && i < text.length - 1
+            text[i].toLowerCase() in first && i < text.length - 1
                     && (text[i + 1].toLowerCase()) in right -> {
                 wrong = true
                 writer.write(text[i].toString())
