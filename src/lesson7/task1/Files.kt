@@ -68,7 +68,7 @@ fun deleteMarked(inputName: String, outputName: String) {
     for (i in File(inputName).readLines()) {
         when {
             i.isEmpty() -> writer.newLine()
-            i[0] != '_' -> {
+            !i.startsWith('_') -> {
                 writer.write(i)
                 writer.newLine()
             }
@@ -105,32 +105,25 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
 fun sibilants(inputName: String, outputName: String) {
     val writer = File(outputName).writer()
     val text = File(inputName).readText()
-    val first = listOf('ж', 'ш', 'ч', 'щ')
-    val expected = listOf('ы', 'я', 'ю')
-    val right = listOf('и', 'а', 'у')
+    val first = setOf('ж', 'ш', 'ч', 'щ')
+    val right = mapOf('ы' to 'и', 'я' to 'а', 'ю' to 'у')
     var wrong = false
 
     for (i in text.indices)
         when {
             wrong -> {
-                for (j in expected.indices) if (text[i].toLowerCase() == expected[j]) {
-                    if (text[i] == expected[j]) writer.write(right[j].toString())
-                    else writer.write(right[j].toUpperCase().toString())
-                }
+                if (text[i] in right) writer.write(right[text[i]].toString())
+                else writer.write(right[text[i].toLowerCase()]?.toUpperCase().toString())
                 wrong = false
             }
-            first.contains(text[i].toLowerCase()) && i < text.length - 1
-                    && expected.contains(text[i + 1].toLowerCase()) -> {
+            (text[i].toLowerCase()) in first && i < text.length - 1
+                    && (text[i + 1].toLowerCase()) in right -> {
                 wrong = true
                 writer.write(text[i].toString())
             }
             else -> writer.write(text[i].toString())
         }
     writer.close()
-}
-
-fun main() {
-    sibilants("input/sibilants_in1.txt", "temp.txt")
 }
 
 /**

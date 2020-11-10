@@ -2,9 +2,6 @@
 
 package lesson5.task1
 
-import ru.spbstu.kotlin.typeclass.classes.defaultMonoids
-import ru.spbstu.wheels.sorted
-
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -90,8 +87,7 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val out = mutableMapOf<Int, MutableList<String>>()
-    for ((key, value) in grades)
-        if (out[value]?.add(key) == null) out[value] = mutableListOf(key)
+    for ((key, value) in grades) out.getOrPut(value, { mutableListOf() }).add(key)
     return out
 }
 
@@ -131,7 +127,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) =
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b).toList()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b.toSet()).toList()
 
 /**
  * Средняя (3 балла)
@@ -206,8 +202,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val out = mutableMapOf<String, Int>()
-    for (i in list) if (out[i] == null) out[i] = 1
-    else out[i] = out[i]?.plus(1) ?: 1
+    for (i in list) out[i] = out[i]?.plus(1) ?: 1
     return out.filter { it.value > 1 }
 }
 
@@ -279,8 +274,8 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    if (list.isEmpty()) return Pair(-1, -1)
-    val fwork = list.filter { it <= number }.sorted()
+    if (list.isEmpty() || list.size == 1) return Pair(-1, -1)
+    val fwork = list.filter { it <= number }
     if (fwork[0] > number / 2 || fwork[fwork.size - 1] < number / 2) return Pair(-1, -1)
     var fst = 0
     var lst = fwork.size - 1

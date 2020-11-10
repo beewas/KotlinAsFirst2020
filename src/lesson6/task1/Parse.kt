@@ -50,20 +50,6 @@ fun timeSecondsToStr(seconds: Int): String {
 /**
  * Пример: консольный ввод
  */
-fun main() {
-    println("Введите время в формате ЧЧ:ММ:СС")
-    val line = readLine()
-    if (line != null) {
-        val seconds = timeStrToSeconds(line)
-        if (seconds == -1) {
-            println("Введённая строка $line не соответствует формату ЧЧ:ММ:СС")
-        } else {
-            println("Прошло секунд с начала суток: $seconds")
-        }
-    } else {
-        println("Достигнут <конец файла> в процессе чтения строки. Программа прервана")
-    }
-}
 
 
 /**
@@ -142,14 +128,37 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    //понятно, что ошибка может тут и проскочить, но такой защиты достаточно для случайной опечатки
-    val work = expression.filter { it != ' ' }.split('+', '-')
-    val signs = expression.filter { it == '-' || it == '+' }
-    if (work.size != signs.length + 1) throw IllegalArgumentException()
+    val signs = mutableListOf<Char>()
+    val work = mutableListOf<Int>()
+    var digit = false
+    var i = 0
+    var j: Int
+    while (i < expression.length) {
+        when {
+            expression[i] == ' ' -> {
+                i++
+                continue
+            }
+            expression[i].isDigit() -> {
+                if (digit) throw IllegalArgumentException()
+                j = i
+                while (i < expression.length && expression[i].isDigit()) i++
+                work.add(expression.substring(j, i).toInt())
+                digit = true
+            }
+            expression[i] == '+' || expression[i] == '-' -> {
+                if (!digit) throw IllegalArgumentException()
+                signs.add(expression[i])
+                digit = false
+                i++
+            }
+            else -> throw IllegalArgumentException()
+        }
+    }
 
-    var out = work[0].toInt()
-    for (i in signs.indices)
-        out += if (signs[i] == '-') -work[i + 1].toInt() else work[i + 1].toInt()
+    var out = work[0]
+    for (a in signs.indices)
+        out += if (signs[a] == '-') -work[a + 1] else work[a + 1]
     return out
 }
 
@@ -226,17 +235,27 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
+
+fun checkCycles(cyc: List<Char>) {
+    var count = 0
+    for (i in cyc) {
+        if (i == '[') count++
+        else count--
+        if (count < 0) throw IllegalArgumentException()
+    }
+    if (count != 0) throw IllegalArgumentException()
+}
+
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val conv = Array<Int>(cells) { 0 }
-    var opening = 0
-    var closing = 0
+    val cycles = mutableListOf<Char>()
     for (i in commands) when (i) {
-        '[' -> opening++
-        ']' -> closing++
+        '[' -> cycles.add('[')
+        ']' -> cycles.add(']')
         '+', '-', '>', '<', ' ' -> continue
         else -> throw IllegalArgumentException()
     }
-    if (opening != closing) throw IllegalArgumentException()
+    checkCycles(cycles)
 
     var pointer = cells / 2
     var comPointer = 0
@@ -245,7 +264,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var numberOfCommands = 0
     while (comPointer < commands.length) {
         if (numberOfCommands >= limit) break
-        if (pointer >= conv.size) throw IllegalStateException()
         when (commands[comPointer]) {
             '[' -> if (conv[pointer] != 0) pointOfReturn.add(comPointer) else skipToNext++
             ']' -> {
@@ -258,6 +276,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             '>' -> if (skipToNext == 0) pointer++
             '<' -> if (skipToNext == 0) pointer--
         }
+        if (pointer >= conv.size || pointer < 0) throw IllegalStateException()
         comPointer++
         if (skipToNext == 0) numberOfCommands++
     }
