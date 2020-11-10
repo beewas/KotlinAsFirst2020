@@ -128,6 +128,7 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
+    if (expression.isEmpty()) throw IllegalArgumentException("At least one number is required for calculations")
     val signs = mutableListOf<Char>()
     val work = mutableListOf<Int>()
     var digit = false
