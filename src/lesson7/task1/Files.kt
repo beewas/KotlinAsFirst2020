@@ -2,7 +2,9 @@
 
 package lesson7.task1
 
+import lesson3.task1.digitNumber
 import java.io.File
+import kotlin.math.pow
 import kotlin.math.exp
 
 // Урок 7: работа с файлами
@@ -175,7 +177,30 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    var maxL = 0
+    val output = mutableListOf<MutableList<String>>()
+    val lines = File(inputName).readLines()
+
+    for (line in lines) output.add(line.trim().split(Regex("\\s+")).toMutableList())
+    for (i in output) {
+        val sizeI = i.fold(0) { prev, it -> prev + it.length } + i.size - 1
+        if (sizeI > maxL) maxL = sizeI
+    }
+
+    val writer = File(outputName).bufferedWriter()
+    for (i in output) {
+        var sizeWithSpaces = i.fold(0) { prev, it -> prev + it.length } + i.size - 1
+        if (i.size > 1)
+            while (sizeWithSpaces != maxL) {
+                for (j in 1 until i.size) {
+                    i[j] = " " + i[j]
+                    sizeWithSpaces++
+                    if (sizeWithSpaces == maxL) break
+                }
+            }
+        writer.write(i.joinToString(separator = " ") + '\n')
+    }
+    writer.close()
 }
 
 /**
@@ -480,6 +505,19 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
+    //val writer = File(outputName).bufferedWriter()
+    //val num = digitNumber(lhv) - 1
+
+    //writer.write(" $lhv | $rhv\n")
+    //for (i in num downTo 0) {
+    // val res = lhv / 10.0.pow(i).toInt()
+    // if (res >= rhv) {
+    //     val spc = " ".repeat(i)
+    //     writer.write("-${(res / rhv) * rhv}$spc  ${lhv / rhv}\n")
+    //     writer.write("-".repeat(num + 2 - i) + "\n")
+    // }
+    //}
+    //writer.close()
     TODO()
 }
 
