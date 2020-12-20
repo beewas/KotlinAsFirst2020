@@ -2,10 +2,8 @@
 
 package lesson7.task1
 
-import lesson3.task1.digitNumber
 import java.io.File
-import kotlin.math.pow
-import kotlin.math.exp
+
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -105,27 +103,21 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val writer = File(outputName).writer()
     val text = File(inputName).readText()
     val first = setOf('ж', 'ш', 'ч', 'щ')
     val right = mapOf('ы' to 'и', 'я' to 'а', 'ю' to 'у')
-    var wrong = false
 
-    for (i in text.indices)
-        when {
-            wrong -> {
-                if (text[i] in right) writer.write(right[text[i]].toString())
-                else writer.write(right[text[i].toLowerCase()]?.toUpperCase().toString())
-                wrong = false
+    var i = 0
+    File(outputName).writer().use {
+        while (i < text.length) {
+            it.write(text[i].toString())
+            if (i < text.length - 1 && text[i].toLowerCase() in first && text[i + 1].toLowerCase() in right.keys) {
+                i++
+                it.write((if (text[i].isLowerCase()) right[text[i]] else right[text[i].toLowerCase()]?.toUpperCase()).toString())
             }
-            text[i].toLowerCase() in first && i < text.length - 1
-                    && (text[i + 1].toLowerCase()) in right -> {
-                wrong = true
-                writer.write(text[i].toString())
-            }
-            else -> writer.write(text[i].toString())
+            i++
         }
-    writer.close()
+    }
 }
 
 /**
@@ -187,20 +179,22 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         if (sizeI > maxL) maxL = sizeI
     }
 
-    val writer = File(outputName).bufferedWriter()
-    for (i in output) {
-        var sizeWithSpaces = i.fold(0) { prev, it -> prev + it.length } + i.size - 1
-        if (i.size > 1)
-            while (sizeWithSpaces != maxL) {
-                for (j in 1 until i.size) {
+    File(outputName).bufferedWriter().use {
+        for (i in output) {
+            if (i.size > 1) {
+                val numberOfChars = i.fold(0) { prev, it -> prev + it.length }
+                val numSpaces = (maxL - numberOfChars) / (i.size - 1)
+                var sizeWithSpaces = numberOfChars + (i.size - 1) * numSpaces
+
+                for (j in 1 until i.size) if (sizeWithSpaces < maxL) {
                     i[j] = " " + i[j]
                     sizeWithSpaces++
-                    if (sizeWithSpaces == maxL) break
-                }
-            }
-        writer.write(i.joinToString(separator = " ") + '\n')
+                } else break
+
+                it.write(i.joinToString(separator = " ".repeat(numSpaces)) + '\n')
+            } else it.write(i.joinToString() + '\n')
+        }
     }
-    writer.close()
 }
 
 /**

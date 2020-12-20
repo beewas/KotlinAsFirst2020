@@ -1,5 +1,6 @@
 package lesson11.task1
 
+
 /**
  * Класс "беззнаковое большое целое число".
  *
@@ -12,10 +13,10 @@ package lesson11.task1
  * сравнение на равенство и неравенство
  */
 class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
-
     /**
      * Конструктор из строки
      */
+    val chunks = mutableListOf<ULong>()
     constructor(s: String) {
         TODO()
     }

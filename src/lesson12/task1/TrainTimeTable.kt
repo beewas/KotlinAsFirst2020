@@ -26,6 +26,7 @@ class TrainTimeTable(val baseStationName: String) {
      * @param destination конечная станция
      * @return true, если поезд успешно добавлен, false, если такой поезд уже есть
      */
+
     fun addTrain(train: String, depart: Time, destination: Stop): Boolean = TODO()
 
     /**
@@ -97,7 +98,7 @@ data class Time(val hour: Int, val minute: Int) : Comparable<Time> {
     /**
      * Сравнение времён на больше/меньше (согласно контракту compareTo)
      */
-    override fun compareTo(other: Time): Int = TODO()
+    override fun compareTo(other: Time) = TODO()
 }
 
 /**
