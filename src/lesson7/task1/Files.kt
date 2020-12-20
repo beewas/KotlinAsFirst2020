@@ -110,10 +110,10 @@ fun sibilants(inputName: String, outputName: String) {
     var i = 0
     File(outputName).writer().use {
         while (i < text.length) {
-            it.write(text[i].toString())
+            it.append(text[i])
             if (i < text.length - 1 && text[i].toLowerCase() in first && text[i + 1].toLowerCase() in right.keys) {
                 i++
-                it.write((if (text[i].isLowerCase()) right[text[i]] else right[text[i].toLowerCase()]?.toUpperCase()).toString())
+                it.append(if (text[i].isLowerCase()) right[text[i]]!! else right[text[i].toLowerCase()]!!.toUpperCase())
             }
             i++
         }
